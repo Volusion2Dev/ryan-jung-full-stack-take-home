@@ -1,0 +1,14 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "@src": "./src",
+      },
+      "extensions": [".ts", ".tsx", ".js", ".jsx"]
+    }],
+    ["styled-components", { "ssr": true }],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+  ]
+}
