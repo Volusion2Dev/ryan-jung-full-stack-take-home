@@ -51,15 +51,16 @@
     "compile:watch": "tsc --pretty --watch",
     "curl": "curl http://localhost:3000/blocks --verbose",
     "dev": "nodemon",
-    "docker": "docker-compose down && docker-compose up",
-    "docker:clean": "docker stop full-stack-postgres && docker rm -v full-stack-postgres",
-    "lint": "eslint 'src/**/*.ts?(x)'",
+    "docker": "docker-compose down && docker-compose up -d",
+    "docker:clean": "docker-compose down -v ",
+    "lint": "eslint \"src/**/*.ts?(x)\"",
     "lint:fix": "npm run lint -- --fix",
     "psql": "psql postgres://postgres:postgres@localhost:5432/postgres",
     "psql:blocks": "npm run psql -- -c 'SELECT id, block_type, position, JSONB_PRETTY(configured_data) as configured_data, created_on, modified_on FROM site_builder.block ORDER BY position;'",
     "start": "next start",
     "test": "jest",
     "test:api": "jest --config jest.server.config.js",
+    "test:all": "npm run test && npm run test:api",
     "test:watch": "jest --watch"
   }
 }

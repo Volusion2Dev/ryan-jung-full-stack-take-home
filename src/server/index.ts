@@ -2,7 +2,7 @@ import * as bodyParser from "body-parser";
 import express, { Request, Response } from "express";
 import next from 'next';
 
-import { getBlocks }  from './api/blocks';
+import { getBlocks, saveBlock }  from './api/blocks';
 import { ApiResponse } from "./apiResponse";
 
 const port = parseInt(process.env.PORT || '3000');
@@ -19,10 +19,16 @@ app.prepare().then(() => {
     res.status(blockResponse.statusCode).json(blockResponse.data);
   });
 
+  server.post('/blocks', async (req: Request, res : Response) => {
+    const block = req.body;
+    const saveBlockResponse: ApiResponse = await saveBlock(block);
+    res.status(saveBlockResponse.statusCode).json(saveBlockResponse.data);
+  });
+
   server.all('*', (req, res) => {
     return handle(req, res);
   });
-
+  
   server.listen(port, (err?: Error) => {
     if (err)  {
       throw err;

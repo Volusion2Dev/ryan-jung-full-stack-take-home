@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Block } from '../../types';
 
 function getNextPosition(blocks: { position: number }[]): number {
     const maxPosition = blocks.reduce((acc: number, block: { position: number }) => Math.max(acc, block.position), 0);
@@ -19,9 +20,9 @@ describe('blocks', (): void => {
         it('should add a block', async (): Promise<void> => {
             const blockResp = await axios.get('http://localhost:3000/blocks');
             const nextPosition = getNextPosition(blockResp.data);
-            const block = {
+            const block: Block = {
                 type: "header",
-                data: {
+                configData: {
                     title: "Slice of Life/Pizza"
                 },
                 position: nextPosition
@@ -51,7 +52,7 @@ describe('blocks', (): void => {
                 fail(`should have thrown 'invalid block type' error`);
             } catch (err) {
                 expect(err.response.status).toBe(400);
-                expect(err.response.data.message).toMatch(/invalid block type/);
+                expect(err.response.data.message).toMatch(/invalid block type/i);
             }
         });
     });

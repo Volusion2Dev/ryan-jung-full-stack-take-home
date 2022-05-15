@@ -28,3 +28,14 @@ export async function getBlocks(): Promise<Block[]> {
     configData: JSON.parse(row.data)
   }));
 }
+
+export function saveBlock(block: Block): Promise<any>{
+    return db.one(
+      `INSERT INTO site_builder.block
+          (block_type, configured_data, position)
+        VALUES
+          ($<type> , $<configData> , $<position>)
+        RETURNING  position, id`,
+        block
+    );
+}

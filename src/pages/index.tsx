@@ -8,6 +8,7 @@ import * as api from './api';
 import UnstyledBlockPicker from "../components/block-picker";
 import UnstyledSite from "../components/site";
 import { Block, BlockType } from "../types";
+import Preview from "../components/preview";
 
 const AppContainer = styled.section`
   display: flex;
@@ -53,6 +54,7 @@ const defaultBlocks: Block[] = [
 export default function Home(): JSX.Element {
   const [blockList, setBlockList] = useState(defaultBlocks);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [previewMode, setPreviewMode] = useState(false);
   const toasterRef = useRef(null);
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function Home(): JSX.Element {
   }, []);
 
   // TODO: call api to save block
-  const addBlock = (blockName: BlockType) => {
+  const addBlock = async (blockName: BlockType) => {
     if (activeIndex === -1) {
       toasterRef.current.show({
         message:
@@ -80,14 +82,21 @@ export default function Home(): JSX.Element {
       });
       return;
     }
+    const addedBlock = {type: blockName, position: activeIndex + 1, configData: null  };
     const updatedBlockList = [
       ...blockList.slice(0, activeIndex),
-      { id: -1, type: blockName, position: activeIndex + 1, configData: null  },
+      { id: -1 , ...addedBlock},
       ...blockList.slice(activeIndex),
     ];
-
     setBlockList(updatedBlockList);
     setActiveIndex(activeIndex + 1);
+    try{
+      const apiResponse = await api.saveBlock(addedBlock);
+    }catch(error){
+      console.error(error);
+    }
+   
+ 
   };
 
   const removeBlock = (index: number) => {
@@ -100,6 +109,7 @@ export default function Home(): JSX.Element {
     if (activeIndex > index) {
       setActiveIndex(activeIndex - 1);
     }
+    
   };
 
   return (
@@ -111,12 +121,14 @@ export default function Home(): JSX.Element {
 
       <AppContainer>
         <Toaster ref={toasterRef} />
-        <BlockPicker addBlock={addBlock} />
+        { !previewMode && <BlockPicker addBlock={addBlock} />}
+        <Preview previewMode={previewMode} setPreviewMode={setPreviewMode}></Preview>
         <Site
           activeIndex={activeIndex}
           blockList={blockList}
           removeBlock={removeBlock}
           setActiveIndex={setActiveIndex}
+          previewMode={previewMode}
         />
       </AppContainer>
     </div>

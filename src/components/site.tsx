@@ -19,19 +19,27 @@ const BlockContainer = styled.div`
     opacity: 0;
   }
 
-  &:hover,
-  &:focus {
-    margin: 15px 0;
-
-    input,
-    textarea {
-      outline: 1px solid #87eaf2;
+  ${ (props) => {
+    if(!props.previewMode){
+      return `&:hover,
+      &:focus {
+        margin: 15px 0;
+    
+        input,
+        textarea {
+          outline: 1px solid #87eaf2;
+        }
+    
+        button {
+          opacity: 1;
+        }
+      }`
+    }else{
+      return `input {
+        pointer-events: none;
+      }`
     }
-
-    button {
-      opacity: 1;
-    }
-  }
+  }}
 `;
 
 const Spacer = styled.div`
@@ -85,6 +93,7 @@ interface SiteProps {
   className?: string;
   removeBlock: (index: number) => void;
   setActiveIndex: (index: number) => void;
+  previewMode: boolean;
 }
 
 const site: React.FunctionComponent<SiteProps> = ({
@@ -93,13 +102,14 @@ const site: React.FunctionComponent<SiteProps> = ({
   className,
   removeBlock,
   setActiveIndex,
+  previewMode
 }) => {
   return (
     <Container className={className}>
       {blockList.map((block: Block, index: number) => {
         const Component = blocks[block.type];
         return (
-          <BlockContainer data-testid="block-container" key={index}>
+          <BlockContainer data-testid="block-container" key={index} previewMode={previewMode}>
             {index === activeIndex ? (
               <Spacer data-testid="spacer">
                 <div>(Insert Blocks from the Side Panel Here)</div>
